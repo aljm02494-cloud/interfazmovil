@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus OS - Organic Interface</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --orb-color: #0a0a0a;
+            --text-color: #ffffff;
+            --accent-color: #3b82f6;
+            --glass-highlight: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Marco del Dispositivo */
+        .device-frame {
+            width: 320px;
+            height: 650px;
+            background: radial-gradient(circle at 50% 30%, #1a1a1a, #000000);
+            border-radius: 45px;
+            position: relative;
+            box-shadow: 
+                0 0 0 4px #333,
+                0 20px 50px rgba(0,0,0,0.5),
+                inset 0 0 20px rgba(255,255,255,0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Pantalla */
+        .screen {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;
+            border-radius: 40px;
+            overflow: hidden;
+        }
+
+        /* Overlay oscuro para legibilidad */
+        .screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 40%);
+            z-index: 1;
+        }
+
+        /* --- CÁMARA CENTRAL (Física) --- */
+        .camera-module {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 24px;
+            background: #000;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: inset 0 0 4px rgba(255,255,255,0.2);
+            border: 1px solid #222;
+        }
+        
+        /* Brillo de la lente */
+        .camera-module::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #444, #000);
+            border-radius: 50%;
+        }
+
+        /* --- EL ORBE (Tu Innovación) --- */
+        /* Contenedor invisible en la esquina derecha */
+        .orb-container {
+            position: absolute;
+            top: 18px; /* Alineado verticalmente con la cámara */
+            right: 25px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; /* Crece hacia la izquierda */
+            z-index: 9;
+            pointer-events: none;
+        }
+
+        .orb {
+            width: 0px; /* Invisible en reposo */
+            height: 24px;
+            background: var(--orb-color);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Rebote orgánico */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* Estado Activo del Orbe */
+        .orb.active {
+            width: 140px; /* Se estira */
+        }
+
+        .orb-content {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            white-space: nowrap;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-left: 8px;
+        }
+
+        .orb.active .orb-content {
+            opacity: 1;
+            transform: scale(1);
+            transition-delay: 0.1s;
+        }
+
+        .orb-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* --- RELOJ LIQUID GLASS --- */
+        .clock-container {
+            position: absolute;
+            top: 80px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 5;
+        }
+
+        .liquid-clock {
+            font-size: 82px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: -2px;
+            
+            /* Efecto Liquid Glass Estirado */
+            transform: scaleY(1.25); 
+            text-shadow: 
+                0 10px 20px rgba(0,0,0,0.3),
+                inset 0 -5px 10px rgba(255,255,255,0.1),
+                0 0 20px rgba(255,255,255,0.2);
+            
+            /* Brillo tipo vidrio */
+            background: linear-gradient(180deg, #fff 0%, #ddd 50%, #aaa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+        }
+
+        .date-display {
+            font-size: 18px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 400;
+            margin-top: -10px; /* Compensar el estiramiento visual */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* --- CONTROLES DE DEMOSTRACIÓN (Fuera del dispositivo) --- */
+        .controls {
+            position: absolute;
+            bottom: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 20;
+        }
+
+        .btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .btn:hover {
+            background: #555;
+        }
+
+        .btn.active-btn {
+            background: var(--accent-color);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="device-frame">
+        <div class="screen">
+            <!-- Cámara Central -->
+            <div class="camera-module"></div>
+
+            <!-- El Orbe (Esquina Derecha) -->
+            <div class="orb-container">
+                <div class="orb" id="nexusOrb">
+                    <div class="orb-content" id="orbContent">
+                        <!-- El contenido se inyecta con JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reloj Liquid Glass -->
+            <div class="clock-container">
+                <div class="liquid-clock" id="clock">12:45</div>
+                <div class="date-display" id="date">Lunes, 24 Oct</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles para probar la interfaz -->
+    <div class="controls">
+        <button class="btn" onclick="triggerOrb('music')">🎵 Música</button>
+        <button class="btn" onclick="triggerOrb('call')">📞 Llamada</button>
+        <button class="btn" onclick="triggerOrb('charge')">⚡ Carga</button>
+        <button class="btn" onclick="resetOrb()">Reset</button>
+    </div>
+
+    <script>
+        // Actualizar Reloj
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}`;
+            
+            const options = { weekday: 'long', day: 'numeric', month: 'short' };
+            document.getElementById('date').textContent = now.toLocaleDateString('es-ES', options);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Lógica del Orbe
+        const orb = document.getElementById('nexusOrb');
+        const content = document.getElementById('orbContent');
+
+        function triggerOrb(type) {
+            // Resetear clase activa para reiniciar animación si es necesario
+            orb.classList.remove('active');
+            
+            setTimeout(() => {
+                let icon = '';
+                let text = '';
+
+                switch(type) {
+                    case 'music':
+                        icon = '<svg class="orb-icon" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>';
+                        text = 'Reproduciendo';
+                        break;
+                    case 'call':
+                        icon = '<svg class="orb-icon" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-2.2 2.2a15.057 15.057 0 01-6.59-6.59l2.2-2.21c.28-.26.36-.65.25-1.01A11.36 11.36 0 018.5 3.99c0-.55-.45-1-1-1H4.12C3.57 2.99 3 3.44 3 3.99c0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.39c0-.55-.45-1-1-1z"/></svg>';
+                        text = 'Llamando...';
+                        break;
+                    case 'charge':
+                        icon = '<svg class="orb-icon" viewBox="0 0 24 24"><path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/></svg>';
+                        text = 'Cargando 84%';
+                        break;
+                }
+
+                content.innerHTML = `${icon} <span>${text}</span>`;
+                orb.classList.add('active');
+            }, 50);
+        }
+
+        function resetOrb() {
+            orb.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
